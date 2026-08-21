@@ -27,10 +27,15 @@ def build_index():
     intro = f"""
 <section class="section">
   <div class="container">
-    <div class="split split--wide-l">
+    <div class="split split--wide-l split--top">
       <div>
         <p class="eyebrow" data-reveal>Кто мы</p>
         <h2 class="h2" data-split>Мы не продаём станко-часы.<br>Мы закрываем задачу целиком.</h2>
+        <div class="u-mt" data-reveal data-delay=".1">
+          {media("ABOUT-HERO", "16:9",
+            "Фасад заводского корпуса в сумерках: длинное здание, светящиеся окна цеха, силуэт крана, "
+            "низкое небо, снег или пыль в воздухе. Спокойный монументальный кадр, холодная палитра.")}
+        </div>
       </div>
       <div class="stack" data-reveal data-delay=".1">
         <p class="lead">«Визитной карточкой» малого бизнеса Темиртау — столицы казахстанской
@@ -41,11 +46,6 @@ def build_index():
         нестандартное оборудование для горно-шахтного производства и собственные профилегибочные линии.</p>
         <div><a class="link-u" href="o-kompanii.html">История и производство {ARW}</a></div>
       </div>
-    </div>
-    <div class="u-mt" data-reveal>
-      {media("ABOUT-HERO", "21:9",
-        "Фасад заводского корпуса в сумерках: длинное здание, светящиеся окна цеха, силуэт крана, "
-        "низкое небо, снег или пыль в воздухе. Спокойный монументальный кадр, холодная палитра.")}
     </div>
   </div>
 </section>"""
