@@ -360,7 +360,8 @@ input,textarea,select{font:inherit;color:inherit}
 .hero__stat b{display:block;font-size:clamp(26px,3.4vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1}
 .hero__stat span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-top:8px;display:block}
 .hero--page{min-height:min(78svh,760px)}
-.hero .eyebrow{display:block}
+/* надзаголовок на первом экране — белым, поверх фото он читается лучше синего */
+.hero .eyebrow{display:block;color:#fff}
 
 .scroll-hint{
   position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:4;
