@@ -3,18 +3,25 @@
 
 from lib import media, scrim, ARW, head_row, feat, ticks, specs
 
+# (подпись, файл логотипа или None — тогда рисуется текстовый чип)
 CLIENTS = [
-    "АО «Qarmet» (АрселорМиттал Темиртау)",
-    "ТОО «Корпорация Казахмыс»",
-    "Евразийская Группа (ERG)",
-    "АО «Соколовско-Сарбайское ГПО»",
-    "ТОО «Казцинк»",
-    "АО «Шубарколь комир»",
-    "ТОО «Карагандинский литейно-машиностроительный завод»",
+    ("Металлургический комбинат, Темиртау", "client-arcelormittal.png"),
+    ("Корпорация Казахмыс",                 "client-kazakhmys.png"),
+    ("Казцинк",                             "client-kazzinc.png"),
+    ("Шубарколь комир",                     "client-shubarkol.png"),
+    ("Карагандинский литейно-машиностроительный завод", "client-klmz.png"),
+    ("Евразийская Группа (ERG)",            None),
+    ("АО «Соколовско-Сарбайское ГПО»",      None),
 ]
 
+def _chip(title, file):
+    if file:
+        return (f'<span class="logo-chip logo-chip--img" title="{title}">'
+                f'<img src="assets/img/{file}" alt="{title}" loading="lazy" height="120"></span>')
+    return f'<span class="logo-chip"><i></i>{title}</span>'
+
 def clients_marquee():
-    row = "".join('<span class="logo-chip"><i></i>' + c + "</span>" for c in CLIENTS * 2)
+    row = "".join(_chip(t, f) for t, f in CLIENTS * 2)
     return f"""
 <section class="section section--tight bg-2">
   <div class="container">
