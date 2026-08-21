@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Промпты для генерации медиа — ИНКАР-1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body{padding:40px 0 80px}
+  .pr{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);
+      padding:20px;display:flex;flex-direction:column;gap:12px}
+  .pr__h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pr__t{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+         padding:4px 9px;border-radius:2px;background:var(--accent);color:#fff}
+  .pr__t--v{background:var(--accent-deep);color:#dce9ff}
+  .pr__p{font-size:13.5px;line-height:1.6;color:#cfd3d7;background:var(--bg);
+         border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;white-space:pre-wrap}
+  .pr__pg{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
+  .toolbar{position:sticky;top:0;z-index:20;background:rgba(8,9,10,.94);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:32px}
+  .plist{display:flex;flex-direction:column;gap:14px}
+  .copied{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+  <p class="eyebrow">Рабочий документ</p>
+  <h1 class="h1" style="margin-bottom:14px">Промпты для генерации кадров</h1>
+  <p class="lead measure">Каждый промпт уже собран целиком: описание кадра + общая стилистика.
+  Копируйте и отдавайте в генератор как есть.</p>
+
+  <div class="stats u-mt" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat"><b id="c-all">—</b><span>Всего слотов</span></div>
+    <div class="stat"><b id="c-photo">—</b><span>Фотографий</span></div>
+    <div class="stat"><b id="c-video">—</b><span>Видео</span></div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="container u-flex u-gap u-wrap" style="align-items:center">
+    <button class="btn btn--ghost" data-f="">Все</button>
+    <button class="btn btn--ghost" data-f="image">Только фото</button>
+    <button class="btn btn--ghost" data-f="video">Только видео</button>
+    <input class="inp" id="q" placeholder="Поиск по слоту или странице" style="max-width:280px">
+    <button class="btn btn--solid" id="copy-all">Скопировать все промпты</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="plist" id="list"><p class="reg-empty">Загрузка…</p></div>
+</div>
+
+<script>
+var STYLE_TAIL =
+  'Стиль: тяжёлая индустриальная кинематография, фотореализм. Тёмная база — графит, ' +
+  'вороненая сталь, бетон. Холодные сине-стальные акценты как доминанта, раскалённый металл ' +
+  'только там, где он есть по сюжету. Один направленный источник света, глубокие тени, ' +
+  'объёмный свет в дыму и пыли. Оптика 35–85 мм, малая ГРИП на предметных кадрах. ' +
+  'Лёгкое зерно, без HDR-пересветов, без глянца, без читаемых логотипов и брендов.';
+
+var VIDEO_SLOTS = ['HERO-01','BAND-01','CTA-01','ABOUT-BAND','GAL-HERO','PROD-HERO','PROD-BAND',
+  'SERV-HERO','SERV-BAND','MET-HERO','MET-BAND','TUBE-HERO','TUBE-BAND','CUST-HERO','CUST-BAND',
+  'EN-HERO','EN-BAND','GOK-HERO','GOK-BAND'];
+
+var SIZE = {'fill':'16:9 · 2560×1440','tall':'3:4 · 1600×2133','21:9':'21:9 · 2560×1097',
+  '16:9':'16:9 · 1920×1080','4:3':'4:3 · 1600×1200','3:2':'3:2 · 1800×1200',
+  '1:1':'1:1 · 1400×1400','4:5':'4:5 · 1400×1750','3:4':'3:4 · 1400×1867'};
+
+var DATA = [], filter = '', q = '';
+
+fetch('assets/media-manifest.json').then(function(r){return r.json();}).then(function(d){
+  var seen = {};
+  DATA = d.filter(function(m){ if(seen[m.slot]) return false; seen[m.slot]=1; return true; })
+          .map(function(m){
+    m.kind = VIDEO_SLOTS.indexOf(m.slot) > -1 ? 'video' : (m.kind || 'image');
+    m.prompt = m.prompt || ((m.desc || '').trim() + ' ' + STYLE_TAIL);
+    return m;
+  });
+  document.getElementById('c-all').textContent = DATA.length;
+  document.getElementById('c-photo').textContent = DATA.filter(function(m){return m.kind!=='video';}).length;
+  document.getElementById('c-video').textContent = DATA.filter(function(m){return m.kind==='video';}).length;
+  render();
+}).catch(function(){
+  document.getElementById('list').innerHTML =
+    '<p class="reg-empty">Откройте страницу через локальный сервер: python3 -m http.server 8000</p>';
+});
+
+function render(){
+  var out = DATA.filter(function(m){
+    if(filter && m.kind !== filter) return false;
+    if(q && (m.slot + ' ' + m.page + ' ' + m.page_title).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  document.getElementById('list').innerHTML = out.map(function(m,i){
+    return '<article class="pr">' +
+      '<div class="pr__h"><span class="pr__t' + (m.kind==='video'?' pr__t--v':'') + '">' +
+        (m.kind==='video'?'видео':'фото') + '</span>' +
+      '<b style="font-family:var(--font-mono);font-size:13px">' + m.slot + '</b>' +
+      '<span class="pr__pg">' + (m.page_title||'') + ' · ' + m.page + ' · ' +
+        (SIZE[m.ratio]||m.ratio) + '</span></div>' +
+      '<div class="pr__p">' + m.prompt + '</div>' +
+      '<div><button class="btn btn--ghost js-c" data-i="' + i + '">Копировать</button></div>' +
+      '</article>';
+  }).join('') || '<p class="reg-empty">Ничего не найдено</p>';
+
+  Array.prototype.forEach.call(document.querySelectorAll('.js-c'), function(b){
+    b.addEventListener('click', function(){
+      navigator.clipboard.writeText(out[+b.dataset.i].prompt);
+      b.textContent = 'Скопировано'; b.classList.add('copied');
+      setTimeout(function(){ b.textContent='Копировать'; b.classList.remove('copied'); }, 1400);
+    });
+  });
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('[data-f]'), function(b){
+  b.addEventListener('click', function(){ filter = b.dataset.f; render(); });
+});
+document.getElementById('q').addEventListener('input', function(e){
+  q = e.target.value.toLowerCase().trim(); render();
+});
+document.getElementById('copy-all').addEventListener('click', function(){
+  navigator.clipboard.writeText(DATA.map(function(m){
+    return '### ' + m.slot + ' (' + (m.kind==='video'?'видео':'фото') + ', ' +
+           (SIZE[m.ratio]||m.ratio) + ')\n' + m.prompt;
+  }).join('\n\n'));
+  this.textContent = 'Скопировано';
+});
+</script>
+</body>
+</html>
