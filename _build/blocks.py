@@ -10,8 +10,8 @@ CLIENTS = [
     ("Казцинк",                             "client-kazzinc.png"),
     ("Шубарколь комир",                     "client-shubarkol.png"),
     ("Карагандинский литейно-машиностроительный завод", "client-klmz.png"),
-    ("Евразийская Группа (ERG)",            None),
-    ("АО «Соколовско-Сарбайское ГПО»",      None),
+    ("Евразийская Группа (ERG)",            "client-erg.png"),
+    ("Соколовско-Сарбайское ГПО",           "client-ssgpo.png"),
 ]
 
 def _chip(title, file):
