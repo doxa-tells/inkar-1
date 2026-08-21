@@ -8,6 +8,7 @@
 ## Уже подставлено
 
 - `HERO-01` → `assets/img/HERO-01.mp4`
+- `ABOUT-HERO` → `assets/img/ABOUT-HERO.jpg`
 - `DIR-MET` → `assets/img/DIR-MET.jpg`
 - `DIR-TUBE` → `assets/img/DIR-TUBE.jpg`
 - `DIR-CUSTOM` → `assets/img/DIR-CUSTOM.jpg`
@@ -26,7 +27,6 @@
 - `CYCLE-05` → `assets/img/CYCLE-05.jpg`
 - `CYCLE-06` → `assets/img/CYCLE-06.jpg`
 - `CYCLE-07` → `assets/img/CYCLE-07.jpg`
-- `ABOUT-HERO` → `assets/img/ABOUT-HERO.jpg`
 - `GAL-HERO` → `assets/img/GAL-HERO.mp4`
 - `MET-HERO` → `assets/img/MET-HERO.mp4`
 - `REGH` → `assets/img/REGH.jpg`
