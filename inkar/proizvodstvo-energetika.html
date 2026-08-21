@@ -10,29 +10,27 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="assets/fonts/shoptronic.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon-64.png">
-<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/img/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180.png">
 </head>
 <body>
 
-<div class="curtain"><div class="curtain__c"><svg  viewBox="0 0 40 40" fill="none" aria-hidden="true">
-<rect x="1" y="1" width="38" height="38" rx="3" stroke="rgba(255,255,255,.28)"/>
-<path d="M9 30V10h4.2v12.1L23.4 10h4.1v20h-4.2V17.9L13.1 30H9Z" fill="#fff"/>
-<rect x="9" y="32.6" width="18.5" height="1.8" fill="#e4551b"/>
-</svg><span>Инкар-1</span></div></div>
+<div class="curtain">
+  <i class="curtain__p curtain__p--t"></i><i class="curtain__p curtain__p--b"></i>
+  <div class="curtain__c"><img class="curtain__logo" src="assets/img/logo.png" alt="ТОО «ИНКАР-1»" width="700" height="288"><span class="curtain__bar"><i></i></span></div>
+</div>
 <div class="pbar"></div>
 <header class="hdr">
   <div class="hdr__in">
     <a class="brand" href="index.html" aria-label="ИНКАР-1 — на главную">
-      <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-<rect x="1" y="1" width="38" height="38" rx="3" stroke="rgba(255,255,255,.28)"/>
-<path d="M9 30V10h4.2v12.1L23.4 10h4.1v20h-4.2V17.9L13.1 30H9Z" fill="#fff"/>
-<rect x="9" y="32.6" width="18.5" height="1.8" fill="#e4551b"/>
-</svg>
-      <span class="brand__txt"><span class="brand__name">ИНКАР-1</span>
+      <img class="brand__logo" src="assets/img/logo.png" alt="ТОО «ИНКАР-1»" width="700" height="288">
+      <span class="brand__txt"><span class="brand__sub">Машиностроение</span>
       <span class="brand__sub">Темиртау · с 1998</span></span>
     </a>
     <nav class="nav">
@@ -52,6 +50,7 @@
   </div>
 </header>
 <div class="mmenu">
+  <img class="mmenu__logo" src="assets/img/logo.png" alt="ТОО «ИНКАР-1»" width="700" height="288">
   <div class="mmenu__grp"><a href="index.html">Главная</a></div>
   <div class="mmenu__grp"><p class="mono">Производство</p>
     <a href="proizvodstvo.html">Все направления</a>
@@ -188,13 +187,7 @@
   <div class="container">
     <div class="ftr__top">
       <div>
-        <a class="brand" href="index.html" style="background:none;border:0;padding:0"><svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-<rect x="1" y="1" width="38" height="38" rx="3" stroke="rgba(255,255,255,.28)"/>
-<path d="M9 30V10h4.2v12.1L23.4 10h4.1v20h-4.2V17.9L13.1 30H9Z" fill="#fff"/>
-<rect x="9" y="32.6" width="18.5" height="1.8" fill="#e4551b"/>
-</svg>
-          <span class="brand__txt"><span class="brand__name">ИНКАР-1</span>
-          <span class="brand__sub">машиностроение · металлообработка</span></span></a>
+        <a class="brand brand--ftr" href="index.html"><img class="ftr__logo" src="assets/img/logo.png" alt="ТОО «ИНКАР-1»" width="700" height="288"></a>
         <p class="small" style="margin:20px 0 0;max-width:34ch">Машиностроительное и металлообрабатывающее
           предприятие полного цикла. Темиртау, Карагандинская область. Работаем с 1998 года.</p>
       </div>

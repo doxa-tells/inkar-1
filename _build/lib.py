@@ -22,11 +22,12 @@ ADDR = "101406, Республика Казахстан, Карагандинс�
 
 ACCENT = "#2f6fd0"          # фирменный синий
 
-LOGO_SVG = """<svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-<rect x="1" y="1" width="38" height="38" rx="3" stroke="rgba(255,255,255,.28)"/>
-<path d="M9 30V10h4.2v12.1L23.4 10h4.1v20h-4.2V17.9L13.1 30H9Z" fill="#fff"/>
-<rect x="9" y="32.6" width="18.5" height="1.8" fill="#e4551b"/>
-</svg>"""
+LOGO_FILE = "assets/img/logo.png"
+
+def logo(cls="brand__logo"):
+    return f'<img class="{cls}" src="{LOGO_FILE}" alt="ТОО «ИНКАР-1»" width="700" height="288">'
+
+LOGO_SVG = logo()           # совместимость со старыми вызовами
 
 # Общий стилевой хвост — добавляется в КАЖДЫЙ промпт.
 STYLE_TAIL = (
@@ -130,13 +131,16 @@ def header(active=""):
     def cl(key):
         return " is-active" if active == key else ""
     return f"""
-<div class="curtain"><div class="curtain__c">{LOGO_SVG.replace('class="brand__mark"','')}<span>Инкар-1</span></div></div>
+<div class="curtain">
+  <i class="curtain__p curtain__p--t"></i><i class="curtain__p curtain__p--b"></i>
+  <div class="curtain__c">{logo("curtain__logo")}<span class="curtain__bar"><i></i></span></div>
+</div>
 <div class="pbar"></div>
 <header class="hdr">
   <div class="hdr__in">
     <a class="brand" href="index.html" aria-label="ИНКАР-1 — на главную">
-      {LOGO_SVG}
-      <span class="brand__txt"><span class="brand__name">ИНКАР-1</span>
+      {logo()}
+      <span class="brand__txt"><span class="brand__sub">Машиностроение</span>
       <span class="brand__sub">Темиртау · с 1998</span></span>
     </a>
     <nav class="nav">
@@ -156,6 +160,7 @@ def header(active=""):
   </div>
 </header>
 <div class="mmenu">
+  {logo("mmenu__logo")}
   <div class="mmenu__grp"><a href="index.html">Главная</a></div>
   <div class="mmenu__grp"><p class="mono">Производство</p>
     <a href="proizvodstvo.html">Все направления</a>
@@ -195,9 +200,7 @@ def footer():
   <div class="container">
     <div class="ftr__top">
       <div>
-        <a class="brand" href="index.html" style="background:none;border:0;padding:0">{LOGO_SVG}
-          <span class="brand__txt"><span class="brand__name">ИНКАР-1</span>
-          <span class="brand__sub">машиностроение · металлообработка</span></span></a>
+        <a class="brand brand--ftr" href="index.html">{logo("ftr__logo")}</a>
         <p class="small" style="margin:20px 0 0;max-width:34ch">Машиностроительное и металлообрабатывающее
           предприятие полного цикла. Темиртау, Карагандинская область. Работаем с 1998 года.</p>
       </div>
@@ -232,11 +235,14 @@ TPL = """<!DOCTYPE html>
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="assets/fonts/shoptronic.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon-64.png">
-<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/img/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180.png">
 </head>
 <body>
 {header}

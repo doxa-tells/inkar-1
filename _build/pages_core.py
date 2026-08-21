@@ -99,7 +99,10 @@ def build_index():
 <section class="section">
   <div class="container">
     {head_row("Уникальные компетенции", "То, что в стране умеем<br>делать только мы.")}
+  </div>
+  <div class="sscroll"><div class="sscroll__inner"><div class="container">
     <div class="steps">
+      <div>
       <ul class="steps__nav">
         <li class="is-on"><button class="steps__btn"><b>01</b><span>Ролики МНЛЗ</span></button></li>
         <li><button class="steps__btn"><b>02</b><span>Валки для электросварной трубы</span></button></li>
@@ -107,6 +110,8 @@ def build_index():
         <li><button class="steps__btn"><b>04</b><span>Профилегибочные линии</span></button></li>
         <li><button class="steps__btn"><b>05</b><span>Зубчатые передачи</span></button></li>
       </ul>
+      <div class="steps__prog"><i></i></div>
+      </div>
       <div>
         <div class="steps__pane is-on">
           {media("UNQ-01", "16:9", "Ролик МНЛЗ в патроне станка, резец снимает наплавленный слой, стружка "
@@ -158,7 +163,7 @@ def build_index():
         </div>
       </div>
     </div>
-  </div>
+  </div></div></div>
 </section>"""
 
     services = f"""

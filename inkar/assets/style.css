@@ -10,14 +10,18 @@
    раскомментируйте @font-face ниже и поменяйте значения переменных.
    ============================================================ */
 
-/*
-@font-face { font-family:"Display"; src:url("fonts/display.woff2") format("woff2");
-             font-weight:100 900; font-display:swap; }
-@font-face { font-family:"Mono"; src:url("fonts/mono.woff2") format("woff2");
-             font-weight:100 900; font-display:swap; }
-*/
+/* фирменный шрифт заголовков */
+@font-face{
+  font-family:"Shoptronic";
+  src:url("fonts/shoptronic.woff2") format("woff2"),
+      url("fonts/shoptronic.woff") format("woff");
+  font-weight:400 700;
+  font-style:normal;
+  font-display:swap;
+}
 
 :root{
+  --font-head:"Shoptronic","Inter Tight","Helvetica Neue",Arial,sans-serif;
   --font-display:"Inter Tight","Helvetica Now Display","Helvetica Neue",Arial,sans-serif;
   --font-mono:"Roboto Mono","ABC Diatype Mono","SF Mono",ui-monospace,monospace;
 
@@ -96,18 +100,25 @@ input,textarea,select{font:inherit;color:inherit}
 }
 .eyebrow--plain{color:var(--accent)}
 
+/* заголовки — фирменным Shoptronic. У шрифта одно начертание (Medium),
+   поэтому просим 500: синтетический жир его портит. */
+.h-display,.h1,.h2,.h3,.h4,
+.card__title,.dircard__t,.regcard__t,.newsrow__t,.feat__t,
+.stat b,.hero__stat b,.ftr__big,.drop-zone__t,.brand__name{
+  font-family:var(--font-head);
+  font-weight:500;
+}
 .h-display{
-  font-size:clamp(32px,5.9vw,88px);
-  line-height:.98;
-  letter-spacing:-.032em;
-  font-weight:600;
+  font-size:clamp(30px,5.4vw,80px);
+  line-height:1.02;
+  letter-spacing:-.02em;
   margin:0;
   text-wrap:balance;
 }
-.h1{font-size:clamp(30px,4.7vw,68px);line-height:1.02;letter-spacing:-.03em;font-weight:600;margin:0}
-.h2{font-size:clamp(28px,3.9vw,58px);line-height:1.04;letter-spacing:-.028em;font-weight:600;margin:0}
-.h3{font-size:clamp(21px,2.1vw,30px);line-height:1.15;letter-spacing:-.02em;font-weight:600;margin:0}
-.h4{font-size:clamp(17px,1.35vw,21px);line-height:1.25;letter-spacing:-.014em;font-weight:600;margin:0}
+.h1{font-size:clamp(28px,4.3vw,62px);line-height:1.06;letter-spacing:-.018em;margin:0}
+.h2{font-size:clamp(26px,3.6vw,52px);line-height:1.08;letter-spacing:-.016em;margin:0}
+.h3{font-size:clamp(20px,2vw,29px);line-height:1.18;letter-spacing:-.012em;margin:0}
+.h4{font-size:clamp(17px,1.35vw,21px);line-height:1.28;letter-spacing:-.008em;margin:0}
 .lead{font-size:clamp(17px,1.55vw,23px);line-height:1.45;color:#cfd3d7;letter-spacing:-.014em;margin:0}
 .body{color:var(--muted);margin:0}
 .body p{margin:0 0 1.1em}
@@ -170,10 +181,9 @@ input,textarea,select{font:inherit;color:inherit}
   transition:background .4s var(--ease);
 }
 .brand:hover{background:rgba(18,20,22,.9)}
-.brand__mark{width:30px;height:30px;flex:none}
-.brand__txt{display:flex;flex-direction:column;line-height:1}
-.brand__name{font-size:16px;font-weight:700;letter-spacing:-.02em}
-.brand__sub{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.18em;color:var(--dim);margin-top:3px}
+.brand__txt{display:flex;flex-direction:column;line-height:1;gap:4px}
+.brand__sub{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.18em;color:var(--dim)}
+@media (max-width:520px){.brand__txt{display:none}}
 
 .nav{
   flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
@@ -219,13 +229,17 @@ input,textarea,select{font:inherit;color:inherit}
   display:none;width:46px;height:46px;flex:none;border-radius:var(--r-pill);
   background:rgba(10,11,12,.72);border:1px solid var(--line);
   -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
-  align-items:center;justify-content:center;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;
 }
-.burger span{display:block;width:17px;height:1.5px;background:#fff;transition:transform .4s var(--ease),opacity .3s}
-.burger span+span{margin-top:5px}
+.burger span{display:block;width:18px;height:1.5px;background:#fff;border-radius:1px;
+  transition:transform .4s var(--ease),opacity .3s}
 .burger.is-on span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
-.burger.is-on span:nth-child(2){opacity:0}
+.burger.is-on span:nth-child(2){opacity:0;transform:scaleX(.2)}
 .burger.is-on span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* цифры в заголовках — моноширинным из навигации: в Shoptronic они выпадают */
+.num{font-family:var(--font-mono);font-weight:500;letter-spacing:-.01em;font-size:.94em}
+.stat b,.hero__stat b,.ok-box__n{font-family:var(--font-mono);font-weight:500;letter-spacing:-.02em}
 
 /* mobile menu */
 .mmenu{
@@ -335,14 +349,18 @@ input,textarea,select{font:inherit;color:inherit}
   padding-top:calc(var(--nav-h) + 46px);padding-bottom:clamp(40px,6vw,84px);overflow:hidden}
 .hero__bg{position:absolute;inset:0;z-index:0}
 .hero__bg .media{height:100%;border-radius:0}
-.hero__in{position:relative;z-index:3;width:100%}
-.hero__grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}
-.hero__meta{display:flex;flex-direction:column;gap:14px;align-items:flex-end;text-align:right}
-.hero__stats{display:flex;gap:clamp(24px,3vw,56px);flex-wrap:wrap;margin-top:clamp(28px,3.5vw,52px);padding-top:26px;border-top:1px solid var(--line)}
+/* контент первого экрана — по центру */
+.hero__in{position:relative;z-index:3;width:100%;text-align:center}
+.hero__in .measure,.hero__in .measure-sm{margin-inline:auto}
+.hero__in .crumbs{justify-content:center}
+.hero__grid{display:grid;grid-template-columns:1fr;gap:clamp(22px,2.6vw,38px);justify-items:center}
+.hero__meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;text-align:center}
+.hero__stats{display:flex;gap:clamp(24px,3vw,56px);flex-wrap:wrap;justify-content:center;
+  margin-top:clamp(28px,3.5vw,52px);padding-top:26px;border-top:1px solid var(--line)}
 .hero__stat b{display:block;font-size:clamp(26px,3.4vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1}
 .hero__stat span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-top:8px;display:block}
 .hero--page{min-height:min(78svh,760px)}
-@media (max-width:900px){.hero__grid{grid-template-columns:1fr}.hero__meta{align-items:flex-start;text-align:left}}
+.hero .eyebrow{display:block}
 
 .scroll-hint{
   position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:4;
@@ -452,6 +470,20 @@ input,textarea,select{font:inherit;color:inherit}
 .steps__pane.is-on{display:block;animation:fadeUp .6s var(--ease) both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @media (max-width:900px){.steps{grid-template-columns:1fr}.steps__nav{position:static}}
+
+/* секция, где шаги листаются скроллом (высоту задаёт app.js) */
+.sscroll{position:relative}
+.sscroll__inner{position:sticky;top:0;min-height:100svh;display:flex;align-items:center}
+.sscroll .steps__nav{position:static}
+.sscroll .steps__prog{height:2px;background:rgba(255,255,255,.09);margin-top:20px;border-radius:2px;overflow:hidden}
+.sscroll .steps__prog i{display:block;height:100%;width:0;background:var(--accent);
+  transition:width .35s var(--ease)}
+@media (max-width:900px){
+  .sscroll{height:auto!important}
+  .sscroll__inner{position:static;min-height:0;display:block}
+  .sscroll .steps__nav,.sscroll .steps__prog{display:none}
+  .sscroll .steps__pane{display:block;animation:none;margin-bottom:clamp(32px,5vw,56px)}
+}
 
 /* --------------------------------------------------------- счётчики / соцдоказательство */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
@@ -631,31 +663,39 @@ input,textarea,select{font:inherit;color:inherit}
   .marquee__row{animation:none}
 }
 
-/* прелоадер / переход между страницами */
-.curtain{position:fixed;inset:0;z-index:300;background:var(--bg);pointer-events:none;transform:translateY(0);transition:transform .8s var(--ease)}
-.curtain.is-up{transform:translateY(-101%)}
-.curtain.is-down{transform:translateY(0)}
-.curtain__c{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.curtain__c svg{width:54px;height:54px;opacity:.9}
-.curtain__c span{font-family:var(--font-mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+/* занавес: две створки расходятся, открывая страницу.
+   Держится, пока не загрузится медиа первого экрана (см. app.js). */
+.curtain{position:fixed;inset:0;z-index:300;pointer-events:none;overflow:hidden}
+.curtain__p{position:absolute;left:0;right:0;height:50.5%;background:var(--bg);
+  transition:transform 1s var(--ease)}
+.curtain__p--t{top:0}
+.curtain__p--b{bottom:0}
+.curtain.is-up .curtain__p--t{transform:translateY(-100%)}
+.curtain.is-up .curtain__p--b{transform:translateY(100%)}
+.curtain__c{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;transition:opacity .45s var(--ease)}
+.curtain.is-up .curtain__c{opacity:0}
+.curtain__bar{width:min(180px,40vw);height:2px;background:rgba(255,255,255,.14);overflow:hidden;border-radius:2px}
+.curtain__bar i{display:block;height:100%;width:35%;background:var(--accent);border-radius:2px;
+  animation:cbar 1.1s var(--ease-io) infinite}
+@keyframes cbar{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+@media (prefers-reduced-motion:reduce){.curtain__bar i{animation:none;width:100%}}
 
 /* прогресс чтения */
 .pbar{position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:150;width:0;transition:width .12s linear}
 
 /* --------------------------------------------------------- логотип
-   Знак-заглушка нарисован инлайном в HTML (оранжевая полоса из первой версии
-   перекрашивается правилом ниже). Как только в assets/img/ появится настоящий
-   файл логотипа, app.js подменит знак на картинку автоматически. */
-svg rect[fill="#e4551b"]{fill:var(--accent)}
-.brand__logo{height:34px;width:auto;flex:none;object-fit:contain}
-.brand--img .brand__txt{display:none}          /* если логотип со словом — текст не дублируем */
-.curtain__c .brand__logo{height:52px}
-.ftr .brand__logo{height:40px}
-.mmenu__logo{height:34px;width:auto;margin-bottom:22px}
+   Везде вставлен настоящий файл assets/img/logo.png прямо в разметку. */
+.brand__logo{height:36px;width:auto;flex:none;object-fit:contain}
+.curtain__logo{height:clamp(64px,7vw,96px);width:auto;object-fit:contain}
+.ftr__logo{height:58px;width:auto;object-fit:contain}
+.brand--ftr{background:none;border:0;padding:0;display:inline-flex}
+.mmenu__logo{height:40px;width:auto;margin-bottom:26px;object-fit:contain}
 .seal{display:flex;align-items:center;gap:16px;padding:18px 22px;border:1px solid var(--line);
   border-radius:var(--r-md);background:var(--surface)}
-.seal img,.seal svg{height:44px;width:auto;flex:none}
+.seal img{height:46px;width:auto;flex:none;object-fit:contain}
 .seal p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+@media (max-width:640px){.brand__logo{height:30px}}
 
 /* утилиты */
 .u-center{text-align:center}

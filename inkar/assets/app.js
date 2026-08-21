@@ -49,7 +49,9 @@
         if (kind === 'video') {
           var v = document.createElement('video');
           v.src = src; v.muted = true; v.loop = true; v.playsInline = true;
-          v.autoplay = true; v.setAttribute('preload', 'metadata');
+          v.autoplay = true;
+          // видео первого экрана грузим сразу — от него зависит занавес
+          v.setAttribute('preload', el.closest('.hero') ? 'auto' : 'metadata');
           if (el.getAttribute('data-poster')) v.poster = el.getAttribute('data-poster');
           el.appendChild(v);
         } else {
@@ -80,13 +82,47 @@
     });
   }
 
-  /* ---------------------------------------------------- 2. Занавес / переходы */
+  /* ---------------------------------------------------- 2. Занавес / переходы
+     Створки расходятся не сразу, а когда медиа первого экрана готово
+     (или по таймауту, чтобы не держать зрителя, если сеть медленная). */
+  var MIN_HOLD = 700;      // минимум, чтобы занавес не мигал
+  var MAX_HOLD = 3500;     // максимум ожидания медиа
+
   function curtain() {
     var c = $('.curtain');
     if (!c) return;
-    requestAnimationFrame(function () {
-      setTimeout(function () { c.classList.add('is-up'); }, reduced ? 0 : 260);
-    });
+    var t0 = Date.now(), opened = false;
+
+    function open() {
+      if (opened) return;
+      opened = true;
+      var wait = Math.max(0, MIN_HOLD - (Date.now() - t0));
+      setTimeout(function () { c.classList.add('is-up'); }, reduced ? 0 : wait);
+    }
+
+    if (reduced) { open(); }
+    else {
+      setTimeout(open, MAX_HOLD);
+      var hero = $('.hero__bg .media, .hero .media');
+      var el = hero && hero.querySelector('video, img');
+      if (!el) {
+        setTimeout(open, 250);
+      } else if (el.tagName === 'VIDEO') {
+        if (el.readyState >= 3) open();
+        else {
+          el.addEventListener('canplay', open, { once: true });
+          el.addEventListener('loadeddata', open, { once: true });
+          el.addEventListener('error', open, { once: true });
+        }
+      } else {
+        if (el.complete) open();
+        else {
+          el.addEventListener('load', open, { once: true });
+          el.addEventListener('error', open, { once: true });
+        }
+      }
+      window.addEventListener('load', function () { setTimeout(open, 150); });
+    }
     document.addEventListener('click', function (e) {
       var a = e.target.closest('a');
       if (!a || reduced) return;
@@ -250,9 +286,83 @@
     });
   }
 
+  /* ---------------------------------------------------- 7b. Цифры в заголовках
+     В Shoptronic цифры выпадают, поэтому подменяем их моноширинным. */
+  var DIGIT_SEL = '.h-display,.h1,.h2,.h3,.h4,.card__title,.dircard__t,' +
+                  '.regcard__t,.newsrow__t,.feat__t,.ftr__big,.quote__t,.lead';
+  function digits() {
+    $$(DIGIT_SEL).forEach(function (el) {
+      if (el.dataset.numed) return;
+      el.dataset.numed = '1';
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var nodes = [], n;
+      while ((n = walker.nextNode())) if (/\d/.test(n.nodeValue)) nodes.push(n);
+      nodes.forEach(function (node) {
+        var frag = document.createDocumentFragment();
+        node.nodeValue.split(/(\d+(?:[.,]\d+)?)/).forEach(function (part, i) {
+          if (!part) return;
+          if (i % 2) {
+            var s = document.createElement('span');
+            s.className = 'num'; s.textContent = part;
+            frag.appendChild(s);
+          } else {
+            frag.appendChild(document.createTextNode(part));
+          }
+        });
+        node.parentNode.replaceChild(frag, node);
+      });
+    });
+  }
+
+  /* ---------------------------------------------------- 7c. Шаги, листаемые скроллом */
+  function scrollSteps() {
+    $$('.sscroll').forEach(function (sec) {
+      var items = $$('.steps__nav li', sec);
+      var panes = $$('.steps__pane', sec);
+      var prog  = $('.steps__prog i', sec);
+      var n = panes.length;
+      if (!n) return;
+
+      if (window.innerWidth < 900 || reduced) { sec.style.height = 'auto'; return; }
+
+      function size() { sec.style.height = Math.round(window.innerHeight * (1 + (n - 1) * 0.8)) + 'px'; }
+      size();
+      window.addEventListener('resize', size);
+
+      var cur = -1;
+      function set(i) {
+        if (i === cur) return;
+        cur = i;
+        items.forEach(function (li, k) { li.classList.toggle('is-on', k === i); });
+        panes.forEach(function (p, k) { p.classList.toggle('is-on', k === i); });
+      }
+      function upd() {
+        var total = sec.offsetHeight - window.innerHeight;
+        if (total <= 0) return;
+        var p = Math.min(Math.max(-sec.getBoundingClientRect().top / total, 0), 1);
+        set(Math.min(n - 1, Math.floor(p * n * 0.999)));
+        if (prog) prog.style.width = (p * 100).toFixed(1) + '%';
+      }
+      window.addEventListener('scroll', upd, { passive: true });
+      upd();
+
+      // клик по пункту — доскроллить до его отрезка
+      items.forEach(function (li, i) {
+        var b = $('.steps__btn', li);
+        if (!b) return;
+        b.addEventListener('click', function () {
+          var total = sec.offsetHeight - window.innerHeight;
+          var y = sec.offsetTop + total * ((i + 0.35) / n);
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        });
+      });
+    });
+  }
+
   /* ---------------------------------------------------- 8. Шаги / табы */
   function steps() {
     $$('.steps').forEach(function (box) {
+      if (box.closest('.sscroll')) return;   // там переключение идёт скроллом
       var btns  = $$('.steps__btn', box);
       var panes = $$('.steps__pane', box);
       btns.forEach(function (b, i) {
@@ -480,73 +590,16 @@
     });
   }
 
-  /* ---------------------------------------------------- 12. Логотип
-     Знак в шапке/подвале/занавесе нарисован инлайном (SVG-заглушка).
-     Положите настоящий логотип в assets/img/ под одним из имён ниже —
-     он подхватится автоматически на всех страницах, без правки HTML. */
-  var LOGO_CANDIDATES = [
-    'assets/img/logo-inkar.svg',
-    'assets/img/logo-inkar.png',
-    'assets/img/logo.svg',
-    'assets/img/logo.png'
-  ];
-  function logo() {
-    var i = 0;
-    (function tryNext() {
-      if (i >= LOGO_CANDIDATES.length) return;      // файла нет — остаётся SVG-заглушка
-      var url = LOGO_CANDIDATES[i++];
-      var probe = new Image();
-      probe.onload = function () { applyLogo(url); };
-      probe.onerror = tryNext;
-      probe.src = url;
-    })();
-  }
-  function applyLogo(url) {
-    // шапка и подвал
-    $$('.brand').forEach(function (b) {
-      var mark = $('.brand__mark', b);
-      if (!mark) return;
-      var img = document.createElement('img');
-      img.src = url; img.alt = 'ИНКАР-1'; img.className = 'brand__logo';
-      mark.replaceWith(img);
-    });
-    // занавес перехода
-    var cs = $('.curtain__c svg');
-    if (cs) {
-      var ci = document.createElement('img');
-      ci.src = url; ci.alt = 'ИНКАР-1'; ci.className = 'brand__logo';
-      cs.replaceWith(ci);
-    }
-    // мобильное меню — добавляем логотип сверху
-    var mm = $('.mmenu');
-    if (mm && !$('.mmenu__logo', mm)) {
-      var mi = document.createElement('img');
-      mi.src = url; mi.alt = 'ИНКАР-1'; mi.className = 'mmenu__logo';
-      mm.insertBefore(mi, mm.firstChild);
-    }
-    // «печать» в тендерном разделе
-    $$('.seal__slot').forEach(function (s) {
-      var si = document.createElement('img');
-      si.src = url; si.alt = 'ИНКАР-1';
-      s.replaceWith(si);
-    });
-  }
-
-  /* ---------------------------------------------------- 13. Год в подвале */
+  /* ---------------------------------------------------- 12. Год в подвале */
   function misc() {
     $$('.js-year').forEach(function (el) { el.textContent = new Date().getFullYear(); });
-    // фавиконка первой версии была оранжевой — перекрашиваем в фирменный синий
-    var fav = $('link[rel="icon"]');
-    if (fav && fav.getAttribute('href').indexOf('e4551b') > -1) {
-      fav.setAttribute('href', fav.getAttribute('href').replace(/e4551b/g, '2f6fd0'));
-    }
   }
 
   /* ---------------------------------------------------- запуск */
   function init() {
-    hydrateMedia(); curtain(); header(); reveals(); parallax();
-    counters(); pinned(); steps(); pbar(); registry(); modalInit();
-    requestForm(); logo(); misc();
+    hydrateMedia(); curtain(); header(); reveals(); digits(); parallax();
+    counters(); pinned(); scrollSteps(); steps(); pbar(); registry(); modalInit();
+    requestForm(); misc();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
